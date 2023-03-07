@@ -7,6 +7,7 @@ package etu1903.framework.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +32,7 @@ public class FrontServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     
+    HashMap<String,Mapping> MappingUrls;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
