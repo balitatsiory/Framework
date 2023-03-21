@@ -5,23 +5,33 @@
  */
 package etu1903.framework.servlet;
 
+import static etu1903.framework.Utilitaire.getClasses2;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import etu1903.framework.ClassIdentifier;
 import etu1903.framework.Mapping;
+import etu1903.framework.Utilitaire;
 
 /**
  *
- * @author Alain
+ * @author ITU
  */
+@WebServlet(name = "FrontServlet", urlPatterns = {"/*"})
 public class FrontServlet extends HttpServlet {
-
+    HashMap<String, Mapping> mappingUrls;
+    String packageName;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -31,32 +41,42 @@ public class FrontServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-    HashMap<String,Mapping> MappingUrls;
-    
+
+
+    public void init() throws ServletException 
+    {
+        //maka izay rehetra anaty package packageName etu1903 deffinisena tanaty web.xml
+        packageName = this.getInitParameter("packageName"); 
+        try {
+            //mametraka anaty HashMap
+            this.mappingUrls=Utilitaire.getAnnotatedMethods(packageName, ClassIdentifier.class);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                String path=request.getPathInfo();
-                String[] names;
-                names = path.split("/");
-                /* TODO output your page here. You may use following sample code. */
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet Myservlet</title>");            
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Servlet Myservlet at " + request.getContextPath() + "</h1>");
-                out.println("Composants de l url :");
+            /* TODO output your page here. You may use following sample code. */
+            //hmtl:5
+            out.println("<!DOCTYPE html><html lang=\"en\"><head>    <meta charset=\"UTF-8\">    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">    <title>Document</title></head><body>");
+            
+            for (Map.Entry<String, Mapping> entry : mappingUrls.entrySet()) {
+                String key = entry.getKey();
+                Mapping value = entry.getValue();
+                out.println("annotation = " + key + "<br>");
+                out.println("class Name = " + value.getClassName()+ "<br>");
+                out.println("foncttion Name = " + value.getMethod()+ "<br>");
+            }
 
-                for (int i = 0; i < names.length; i++) {
-                    out.println(names[i]);
-                }
-
-                out.println("</body>");
-                out.println("</html>");
+            out.println("</body>");
+            out.println("</html>");
+                     
         }
     }
 
@@ -72,7 +92,11 @@ public class FrontServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -86,7 +110,11 @@ public class FrontServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -98,5 +126,5 @@ public class FrontServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
+    
 }
